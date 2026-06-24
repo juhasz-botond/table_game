@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customize your game — Memory &amp; Chaos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Mulish:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rose:#d18a80; --rose-deep:#c0746a; --rose-soft:#ecc9c1; --blob:#f7ddd6;
+    --green:#3f4a39; --green-deep:#333c2e;
+    --cream:#fdf5f1; --cream2:#fbeee9; --panel:#fffdfb; --ink:#3a322e; --muted:#9a8c85; --line:#efe1da;
+    --serif:'Playfair Display', Georgia, serif; --sans:'Mulish','Segoe UI',sans-serif; --hand:'Caveat',cursive;
+    --wrap:1180px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:linear-gradient(180deg,#fdf3ee,#fbeee9 60%,#fdf5f1);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  ::selection{background:var(--rose-soft);color:var(--green-deep)}
+  img,svg{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3,h4{font-family:var(--serif);font-weight:600;line-height:1.16;color:var(--ink)}
+  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 28px}
+  input,select,textarea,button{font-family:inherit}
+
+  /* nav */
+  .nav{position:sticky;top:0;z-index:50;background:rgba(253,245,241,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:var(--wrap);margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+  .logo{font-family:var(--serif);text-align:center;line-height:1;letter-spacing:.18em;font-size:1rem}
+  .logo .amp{display:flex;align-items:center;justify-content:center;gap:.5em;font-size:.7em;margin:.18em 0;color:var(--muted)}
+  .logo .amp::before,.logo .amp::after{content:"";width:18px;height:1px;background:var(--line)}
+  .menu{display:flex;gap:2rem;list-style:none;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+  .menu a{padding:.4em 0;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+  .menu a:hover{color:var(--rose-deep)}
+  .menu a.active{color:var(--rose-deep);border-color:var(--rose)}
+  .nav-icons{display:flex;align-items:center;gap:1.2rem}
+  .nav-icons a{position:relative;display:grid;place-items:center}
+  .cart-badge{position:absolute;top:-7px;right:-9px;background:var(--rose);color:#fff;font-size:.6rem;font-weight:700;border-radius:999px;min-width:15px;height:15px;display:grid;place-items:center;padding:0 3px}
+  .hamburger{display:none;background:none;border:none;cursor:pointer;color:var(--ink)}
+
+  /* progress */
+  .progress{background:rgba(255,255,255,.55);border-bottom:1px solid var(--line)}
+  .progress-in{max-width:var(--wrap);margin:0 auto;padding:20px 28px;display:flex;align-items:flex-start;gap:6px;justify-content:space-between}
+  .pstep{display:flex;align-items:flex-start;gap:.7rem;flex:0 1 auto}
+  .pstep .pn{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--rose-soft);color:var(--rose);display:grid;place-items:center;font-family:var(--serif);font-size:.95rem;flex:0 0 auto;background:#fff;transition:.2s}
+  .pstep .pt{font-size:.86rem;font-weight:700;color:var(--muted);line-height:1.15}
+  .pstep .ps{font-size:.74rem;color:var(--muted);font-weight:400}
+  .pstep.active .pn{background:var(--rose);border-color:var(--rose);color:#fff;box-shadow:0 6px 14px -6px var(--rose)}
+  .pstep.active .pt{color:var(--rose-deep)}
+  .pdash{flex:1 1 auto;border-top:1.5px dotted var(--rose-soft);margin-top:15px;min-width:18px}
+  @media (max-width:860px){.pstep .pt,.pstep .ps{display:none}.progress-in{justify-content:center;gap:10px}.pdash{min-width:30px}}
+
+  /* heading */
+  .head{max-width:var(--wrap);margin:0 auto;padding:40px 28px 8px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+  .head h1{font-size:clamp(2rem,4vw,2.9rem)}
+  .head h1 .hrt{color:var(--rose)}
+  .callout{display:flex;gap:.8rem;align-items:flex-start;background:var(--cream2);border:1px solid var(--rose-soft);border-radius:14px;padding:16px 20px;max-width:340px;color:#6f635c;font-size:.9rem}
+  .callout .sp{color:var(--rose);flex:0 0 auto}
+
+  /* layout */
+  .layout{max-width:var(--wrap);margin:0 auto;padding:24px 28px 60px;display:grid;grid-template-columns:1fr 300px;gap:30px;align-items:start}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:34px 34px 30px;box-shadow:0 30px 60px -40px rgba(58,50,46,.4)}
+  .panel-title{color:var(--rose-deep);letter-spacing:.2em;text-transform:uppercase;font-size:.92rem;font-weight:700;font-family:var(--sans);display:flex;align-items:center;gap:.5rem}
+  .panel-sub{color:var(--muted);font-size:.92rem;margin:.2rem 0 1.6rem}
+
+  /* question rows */
+  .q{display:grid;grid-template-columns:64px 1fr;gap:18px;padding:22px 0;border-top:1px solid var(--line)}
+  .q:first-of-type{border-top:none;padding-top:6px}
+  .blob{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;color:var(--rose);
+    background:radial-gradient(circle at 38% 32%, #fbe6e0, var(--blob));box-shadow:inset 0 0 0 1px rgba(209,138,128,.12)}
+  .q-main .qhead{display:flex;align-items:baseline;gap:.6rem}
+  .q-num{width:22px;height:22px;border-radius:50%;background:var(--rose-soft);color:#fff;font-size:.72rem;font-weight:700;display:grid;place-items:center;flex:0 0 auto;transform:translateY(2px)}
+  .q-main h3{font-size:1.18rem}
+  .q-hint{color:var(--muted);font-size:.88rem;margin:.15rem 0 .8rem}
+  .field{width:100%;border:1px solid var(--line);background:#fffdfb;border-radius:9px;padding:.78em 1em;font-size:.96rem;color:var(--ink);transition:border-color .2s,box-shadow .2s}
+  .field::placeholder{color:#c3b6ae}
+  .field:focus{outline:none;border-color:var(--rose);box-shadow:0 0 0 3px rgba(209,138,128,.15)}
+  select.field{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23c0746a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1em center;padding-right:2.4em}
+  .ta-wrap{position:relative}
+  textarea.field{resize:vertical;min-height:52px}
+  .counter{position:absolute;right:12px;bottom:9px;font-size:.72rem;color:#c3b6ae;background:#fffdfb;padding:0 4px}
+
+  /* chips */
+  .chips{display:flex;flex-wrap:wrap;gap:.55rem}
+  .chip{border:1px solid var(--rose-soft);background:#fff;color:var(--ink);border-radius:999px;padding:.5em 1.05em;font-size:.86rem;cursor:pointer;transition:.18s;display:inline-flex;align-items:center;gap:.4em}
+  .chip:hover{border-color:var(--rose)}
+  .chip.active{background:var(--rose);border-color:var(--rose);color:#fff}
+  .chip .x{font-size:.9em;opacity:.8}
+  .chip.add{color:var(--rose-deep);border-style:dashed}
+  .addbox{display:none;margin-top:.6rem;gap:.5rem}
+  .addbox.show{display:flex}
+  .addbox input{flex:1}
+
+  /* quickfire grid */
+  .grid-fav{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem}
+  @media (max-width:520px){.grid-fav{grid-template-columns:1fr}}
+
+  /* sections */
+  .sectionhead{display:grid;grid-template-columns:64px 1fr;gap:18px;align-items:center;margin:34px 0 4px;padding-top:26px;border-top:2px solid var(--cream2)}
+  .sectionhead h2{font-size:1.35rem}
+  .sectionhead .sdesc{color:var(--muted);font-size:.86rem}
+  .gate{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin:14px 0 2px;padding-left:82px}
+  .gate .glabel{font-size:.92rem;color:var(--ink);font-weight:600}
+  .gate .gbtns{display:flex;gap:.5rem}
+  .gbtn{border:1px solid var(--rose-soft);background:#fff;border-radius:999px;padding:.32em 1.1em;font-size:.82rem;cursor:pointer;transition:.18s}
+  .gbtn.active{background:var(--green);color:#fff;border-color:var(--green)}
+  .gated{overflow:hidden;transition:max-height .4s ease,opacity .3s ease}
+  .gated.collapsed{max-height:0 !important;opacity:0;pointer-events:none}
+  .skipnote{padding:6px 0 0 82px;color:var(--muted);font-style:italic;font-size:.86rem;display:none}
+  .skipnote.show{display:block}
+
+  .divider{display:flex;align-items:center;gap:1rem;margin:30px 0 6px;color:var(--rose-deep)}
+  .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--rose-soft)}
+  .divider span{font-family:var(--serif);font-style:italic;font-size:1.05rem}
+
+  /* continue */
+  .continue{margin-top:30px}
+  .btn-cta{width:100%;background:var(--rose);color:#fff;border:none;border-radius:10px;padding:1.1em;font-size:.86rem;font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.7em;transition:.2s}
+  .btn-cta:hover{background:var(--rose-deep);transform:translateY(-2px)}
+  .savednote{text-align:center;color:var(--muted);font-size:.8rem;margin-top:.9rem;display:flex;align-items:center;justify-content:center;gap:.4rem}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#fff;
+    padding:.7em 1.3em;border-radius:999px;font-size:.84rem;opacity:0;transition:.3s;z-index:80;box-shadow:0 14px 30px -12px rgba(0,0,0,.4)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* help sidebar */
+  .help{position:sticky;top:96px;background:var(--panel);border:1px solid var(--rose-soft);border-radius:16px;padding:26px 24px;text-align:center}
+  .help .hicon{color:var(--rose);margin:-40px auto 8px;width:34px;height:34px;background:var(--panel);border-radius:50%;display:grid;place-items:center}
+  .help h3{color:var(--rose-deep);letter-spacing:.12em;text-transform:uppercase;font-family:var(--sans);font-weight:700;font-size:.86rem;margin-bottom:.8rem}
+  .help p.intro{font-size:.9rem;color:#6f635c;margin-bottom:1rem}
+  .help ul{list-style:none;text-align:left;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.2rem}
+  .help li{display:flex;gap:.6rem;font-size:.9rem;color:#5f554f}
+  .help li .hh{color:var(--rose)}
+  .help .hand{font-family:var(--hand);font-size:1.35rem;color:var(--rose-deep);line-height:1.2}
+  @media (max-width:980px){.layout{grid-template-columns:1fr}.help{position:static;margin-top:6px}.head{grid-template-columns:1fr}}
+  @media (max-width:860px){.menu{display:none}.hamburger{display:grid}
+    .menu.open{display:flex;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:var(--cream);padding:18px 28px;gap:1rem;border-bottom:1px solid var(--line)}}
+  @media (max-width:600px){.q{grid-template-columns:1fr}.blob{display:none}.gate,.skipnote,.sectionhead{padding-left:0}.sectionhead{grid-template-columns:1fr}}
+
+  /* footer */
+  footer{background:var(--green);color:#cfd5c6;margin-top:40px}
+  .foot-in{max-width:var(--wrap);margin:0 auto;padding:26px 28px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:.78rem;color:#aeb6a4;letter-spacing:.05em}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a href="index.html" class="logo">MEMORY<span class="amp">&amp;</span>CHAOS</a>
+    <ul class="menu" id="menu">
+      <li><a href="index.html#how">How it works</a></li>
+      <li><a href="index.html#examples">Examples</a></li>
+      <li><a href="#" class="active">Customize</a></li>
+      <li><a href="index.html#shop">Shop</a></li>
+      <li><a href="index.html#about">About</a></li>
+    </ul>
+    <div class="nav-icons">
+      <a href="#" aria-label="Account"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></a>
+      <a href="#" aria-label="Cart"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0"/></svg><span class="cart-badge">2</span></a>
+      <button class="hamburger" id="hamburger" aria-label="Menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</nav>
+
+<div class="progress">
+  <div class="progress-in">
+    <div class="pstep active"><div class="pn">1</div><div><div class="pt">About Them</div><div class="ps">Who is the game for?</div></div></div>
+    <div class="pdash"></div>
+    <div class="pstep"><div class="pn">2</div><div><div class="pt">Memories &amp; Stories</div><div class="ps">The good stuff</div></div></div>
+    <div class="pdash"></div>
+    <div class="pstep"><div class="pn">3</div><div><div class="pt">Card Customization</div><div class="ps">Personalize the fun</div></div></div>
+    <div class="pdash"></div>
+    <div class="pstep"><div class="pn">4</div><div><div class="pt">Review &amp; Order</div><div class="ps">Almost there!</div></div></div>
+  </div>
+</div>
+
+<div class="head">
+  <h1>Let's create a game<br>they'll never forget <span class="hrt">&#9829;</span></h1>
+  <div class="callout"><span class="sp"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 3l1.3 5.2L18 9.5l-4.7 1.3L12 16l-1.3-5.2L6 9.5l4.7-1.3z"/></svg></span><span>Answer a few fun questions and we'll turn your stories into a one-of-a-kind board game.</span></div>
+</div>
+
+<div class="layout">
+  <div class="panel">
+    <div class="panel-title">About Them <span style="color:var(--rose)">&#9829;</span></div>
+    <div class="panel-sub">Tell us about the person this game is for.</div>
+    <form id="form" autocomplete="off"></form>
+
+    <div class="continue">
+      <button type="button" class="btn-cta" id="continueBtn">Continue to Memories &amp; Stories
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <div class="savednote"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 018 0v3"/></svg> Your answers are saved automatically and kept private.</div>
+    </div>
+  </div>
+
+  <aside class="help">
+    <div class="hicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l1 4 4 1-4 1-1 4-1-4-4-1 4-1z"/></svg></div>
+    <h3>Need help?</h3>
+    <p class="intro">Not sure what to write? Here are some ideas:</p>
+    <ul>
+      <li><span class="hh">&#9829;</span> Think about funny moments</li>
+      <li><span class="hh">&#9829;</span> Inside jokes</li>
+      <li><span class="hh">&#9829;</span> Unforgettable stories</li>
+      <li><span class="hh">&#9829;</span> Things they always say</li>
+      <li><span class="hh">&#9829;</span> Their quirks and habits</li>
+    </ul>
+    <p class="hand">The better the stories,<br>the better the game! &#9829;</p>
+  </aside>
+</div>
+
+<div class="toast" id="toast">Saved &#10003;</div>
+
+<footer><div class="foot-in"><span>&copy; Memory &amp; Chaos</span><span>Made with love in Budapest</span></div></footer>
+
+<script>
+/* ---------- icon set ---------- */
+const I = {
+  heart:'<path d="M12 20s-7-4.4-9.3-8.8C1.2 8 2.6 4.6 6 4.6c2 0 3.2 1.3 4 2.4.8-1.1 2-2.4 4-2.4 3.4 0 4.8 3.4 3.3 6.6C19 15.6 12 20 12 20z"/>',
+  cake:'<path d="M4 21h16v-8H4z"/><path d="M4 15c1.5 0 1.5 1.4 3 1.4S10 15 11.5 15s1.5 1.4 3 1.4S17 15 18.5 15"/><path d="M8 9v3M12 8v4M16 9v3"/>',
+  spark:'<path d="M12 3l1.3 5.2L18 9.5l-4.7 1.3L12 16l-1.3-5.2L6 9.5l4.7-1.3z"/><path d="M18 14l.6 2 2 .6-2 .6L18 19l-.6-2-2-.6 2-.6z"/>',
+  coffee:'<path d="M5 9h11v5a4 4 0 01-4 4H9a4 4 0 01-4-4z"/><path d="M16 10h2.5a2 2 0 010 4H16"/><path d="M8 3v2M11 3v2"/>',
+  ghost:'<path d="M6 20V11a6 6 0 0112 0v9l-2-1.5L14 20l-2-1.5L10 20l-2-1.5z"/><circle cx="9.5" cy="11" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="11" r="1" fill="currentColor" stroke="none"/>',
+  smile:'<circle cx="12" cy="12" r="9"/><path d="M8.5 14c1 1.3 2.2 2 3.5 2s2.5-.7 3.5-2"/><circle cx="9" cy="10" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1" fill="currentColor" stroke="none"/>',
+  group:'<circle cx="9" cy="9" r="2.6"/><path d="M3.5 19c0-3 2.4-5.2 5.5-5.2S14.5 16 14.5 19"/><path d="M16 6.4A2.6 2.6 0 0119 11M20.5 19c0-2.2-1.1-4.1-2.9-5"/>',
+  home:'<path d="M4 11l8-6 8 6"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/>',
+  book:'<path d="M4 5a2 2 0 012-2h6v16H6a2 2 0 00-2 2z"/><path d="M20 5a2 2 0 00-2-2h-6v16h6a2 2 0 012 2z"/>',
+  medal:'<circle cx="12" cy="15" r="5"/><path d="M12 13.2l.9 1.8 2 .3-1.4 1.4.3 2-1.8-1-1.8 1 .3-2L9.1 15.3l2-.3z"/><path d="M8 3l2 7M16 3l-2 7"/>',
+  note:'<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>',
+  palette:'<path d="M12 3a9 9 0 000 18c1.7 0 2-1.3 1.2-2.2-.8-1 .1-2.3 1.3-2.3H17a4 4 0 004-4c0-4.4-4-7.5-9-7.5z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="15" cy="8" r="1"/>',
+  cap:'<path d="M3 9l9-4 9 4-9 4z"/><path d="M7 11v4c0 1.3 2.2 2.5 5 2.5s5-1.2 5-2.5v-4"/><path d="M21 9v4"/>',
+  briefcase:'<rect x="3" y="7" width="18" height="13" rx="1.5"/><path d="M9 7V5.5A1.5 1.5 0 0110.5 4h3A1.5 1.5 0 0115 5.5V7"/><path d="M3 12h18"/>',
+  paw:'<ellipse cx="12" cy="16" rx="4" ry="3.2"/><circle cx="6.5" cy="11" r="1.6"/><circle cx="17.5" cy="11" r="1.6"/><circle cx="9" cy="7.5" r="1.6"/><circle cx="15" cy="7.5" r="1.6"/>',
+  wink:'<circle cx="12" cy="12" r="9"/><path d="M8.5 14c1 1.3 2.2 2 3.5 2s2.5-.7 3.5-2"/><path d="M7.5 10h2.5"/><circle cx="15" cy="10" r="1" fill="currentColor" stroke="none"/>',
+  plane:'<path d="M3 14l18-7-7 18-3-7z"/><path d="M11 13l3-3"/>',
+  star:'<path d="M12 3l2.5 6 6.5.5-5 4.2 1.6 6.3L12 16.8 6.4 20l1.6-6.3-5-4.2 6.5-.5z"/>',
+  rings:'<circle cx="9" cy="14" r="5"/><circle cx="15" cy="14" r="5"/><path d="M9 5l-1.5 2.5h3z" fill="currentColor" stroke="none"/><path d="M15 5l-1.5 2.5h3z" fill="currentColor" stroke="none"/>'
+};
+const svg = (k) => `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">${I[k]||I.heart}</svg>`;
+
+/* ---------- warm intro questions (kept from mockup) ---------- */
+const WARM = [
+  {id:'name', icon:'heart', q:'Who is the game for?', hint:'Their name or nickname', type:'text', ph:'E.g. Flóra, Lora, my sister…'},
+  {id:'occasion', icon:'cake', q:"What's the occasion?", hint:'Birthday, bachelorette, anniversary…', type:'select',
+     options:['Choose an occasion','Birthday','Bachelorette party','Anniversary','Wedding','Engagement','Retirement','Just because','Other']},
+  {id:'personality', icon:'spark', q:'How would you describe their personality?', hint:'Pick up to 3.', type:'chips', max:3,
+     options:['Funny','Caring','Adventurous','Chaotic','Ambitious','Loyal','Dreamy','Sassy','Other']},
+  {id:'hobbies', icon:'heart', q:'What are their hobbies or passions?', hint:'Pick as many as you like.', type:'tags',
+     options:['Travel','Dancing','Wine','Photography','Cooking','Reading','Fitness','Art'], preset:['Travel','Dancing','Wine','Photography','Cooking']},
+  {id:'motto', icon:'coffee', q:"What's their life motto (or something they always say)?", hint:'It can be funny, deep or totally random.', type:'textarea', max:120, ph:'E.g. Coffee first, chaos later.'},
+  {id:'fear', icon:'ghost', q:"What's their biggest (funny) fear?", hint:'This might become a Boogie card…', type:'textarea', max:120, ph:'E.g. Thyme. Spiders. Commitment.'}
+];
+
+/* ---------- TRACK A — structured sections ---------- */
+const SECTIONS = [
+  {id:'roots', icon:'home', title:'Roots & Childhood', desc:'Where it all began.', qs:[
+    {id:'r_nick', q:'Childhood nickname (what family called her)?', type:'text'},
+    {id:'r_toy', q:'Favorite toy or comfort object as a small child?', type:'text'},
+    {id:'r_grow', q:'Where did she grow up (town / neighborhood)?', type:'text'},
+    {id:'r_story', q:'One funny or famous childhood story everyone retells?', type:'textarea', max:250}
+  ]},
+  {id:'school', icon:'book', title:'School Years', desc:'', qs:[
+    {id:'s_fav', q:'Favorite school subject?', type:'text'},
+    {id:'s_hate', q:'Most hated school subject?', type:'text'},
+    {id:'s_joke', q:'A nickname, reputation, or running joke from school?', type:'text'},
+    {id:'s_known', q:'Any club, team, or activity she was known for?', type:'text'}
+  ]},
+  {id:'sport', icon:'medal', title:'Sports & Movement',
+    gate:{q:'Did she play a sport seriously at any point?'}, qs:[
+    {id:'sp_which', q:'Which sport(s)?', type:'text', gated:true},
+    {id:'sp_level', q:'Recreationally or competitively?', type:'select', options:['Choose…','Recreationally','Competitively'], gated:true},
+    {id:'sp_years', q:'(If competitive) How many years did she compete?', type:'text', gated:true},
+    {id:'sp_top', q:'Highest achievement — title, rank, medals/wins?', type:'text', gated:true},
+    {id:'sp_injury', q:'A memorable injury, near-miss, or comeback?', type:'textarea', max:200, gated:true},
+    {id:'sp_abroad', q:'Did she travel or compete abroad for it?', type:'text', gated:true}
+  ]},
+  {id:'music', icon:'note', title:'Music & Performing Arts', desc:'Instrument, singing, dance, theater — or none.', qs:[
+    {id:'m_type', q:'Which of these?', hint:'Tick all that apply.', type:'chips', options:['Instrument','Singing','Dance','Theater','None']},
+    {id:'m_which', q:'Which one(s) specifically?', type:'text'},
+    {id:'m_years', q:'How many years?', type:'text'},
+    {id:'m_shows', q:'Any recitals, bands, shows, or competitions?', type:'text'},
+    {id:'m_sig', q:'Signature piece / song / role?', type:'text'}
+  ]},
+  {id:'hobby', icon:'palette', title:'Other Hobbies & Passions', desc:'', qs:[
+    {id:'h_types', q:'What is she into?', hint:'Tick all that apply.', type:'chips',
+       options:['Art / crafts','Gaming','Reading','Cooking / baking','Collecting','Gardening','Photography','Other']},
+    {id:'h_how', q:'For her main hobby: how did she get into it?', type:'textarea', max:200},
+    {id:'h_fame', q:'Any "claim to fame" within it (a prize, a following, a legendary creation)?', type:'text'}
+  ]},
+  {id:'edu', icon:'cap', title:'Education & Coming of Age',
+    gate:{q:'Did she go to university / college?'}, qs:[
+    {id:'e_where', q:'Where did she study?', type:'text', gated:true},
+    {id:'e_what', q:'What did she study?', type:'text', gated:true},
+    {id:'e_almost', q:'A field she almost chose but didn\u2019t — and why?', type:'text', gated:true},
+    {id:'e_moveout', q:'First time moving out / living on her own (where, age)?', type:'text'}
+  ]},
+  {id:'career', icon:'briefcase', title:'Career & Work', desc:'', qs:[
+    {id:'c_first', q:'First-ever job (even a teenage one)?', type:'text'},
+    {id:'c_ft', q:'First full-time role — exact job title?', type:'text'},
+    {id:'c_now', q:'Current job?', type:'text'},
+    {id:'c_land', q:'How did she land the job she\u2019s in now (referral, lucky break, bold move)?', type:'textarea', max:200},
+    {id:'c_dream', q:'What did she want to be when she was a kid?', type:'text'}
+  ]},
+  {id:'pets', icon:'paw', title:'Pets & Animals',
+    gate:{q:'Does she have / has she had a beloved pet?'}, qs:[
+    {id:'p_name', q:'Pet\u2019s name and species/breed?', type:'text', gated:true},
+    {id:'p_named', q:'How did the pet get its name?', type:'text', gated:true},
+    {id:'p_age', q:'How old was she when she got it?', type:'text', gated:true},
+    {id:'p_quirk', q:'A trick, habit, or quirk the pet is known for?', type:'text', gated:true}
+  ]},
+  {id:'quirks', icon:'wink', title:'Quirks, Fears & Funny Traits', desc:'The cards that get the biggest laughs.', qs:[
+    {id:'q_fear', q:'Something she\u2019s irrationally afraid of or squeamish about?', type:'text'},
+    {id:'q_habit', q:'A weird habit, ritual, or superstition?', type:'text'},
+    {id:'q_word', q:'A catchphrase or word she massively overuses?', type:'text'},
+    {id:'q_guilty', q:'A guilty pleasure?', type:'text'},
+    {id:'q_known', q:'The "anyone who knows her knows that she…" fact?', type:'textarea', max:200}
+  ]},
+  {id:'travel', icon:'plane', title:'Travel & Firsts', desc:'', qs:[
+    {id:'t_fly', q:'Age she first flew on a plane?', type:'text'},
+    {id:'t_fav', q:'Favorite place she\u2019s ever traveled?', type:'text'},
+    {id:'t_dream', q:'A dream destination she hasn\u2019t reached yet?', type:'text'},
+    {id:'t_disaster', q:'A travel-disaster story?', type:'textarea', max:200}
+  ]},
+  {id:'fav', icon:'star', title:'Favorites', desc:'Quick-fire — fill in what you can.', qs:[
+    {id:'fav_grid', type:'quickfire', items:['Food','Snack','Drink','Dessert','Show','Movie','Book','Musician / band','Color','Her car\u2019s nickname','Her first phone']}
+  ]},
+  {id:'partner', icon:'rings', title:'The Bride & Her Partner', desc:'', qs:[
+    {id:'pa_meet', q:'How and where did they meet?', type:'text'},
+    {id:'pa_date', q:'Where was their first date?', type:'text'},
+    {id:'pa_long', q:'How long have they been together?', type:'text'},
+    {id:'pa_propose', q:'The proposal — where and how?', type:'textarea', max:200},
+    {id:'pa_joke', q:'A running joke or pet name between them?', type:'text'}
+  ]}
+];
+
+/* ---------- state ---------- */
+const state = {};
+
+/* ---------- builders ---------- */
+function fieldHTML(item){
+  const id = item.id;
+  if(item.type==='text') return `<input class="field" type="text" data-q="${id}" placeholder="${item.ph||''}">`;
+  if(item.type==='textarea') return `<div class="ta-wrap"><textarea class="field" data-q="${id}" maxlength="${item.max||250}" placeholder="${item.ph||''}"></textarea><span class="counter" data-counter="${id}">0/${item.max||250}</span></div>`;
+  if(item.type==='select') return `<select class="field" data-q="${id}">${item.options.map((o,i)=>`<option value="${i===0?'':o}">${o}</option>`).join('')}</select>`;
+  if(item.type==='chips'){
+    return `<div class="chips" data-chipgroup="${id}" data-max="${item.max||0}">`+
+      item.options.map(o=>`<button type="button" class="chip" data-q="${id}" data-val="${o}">${o}</button>`).join('')+`</div>`;
+  }
+  if(item.type==='tags'){
+    return `<div class="chips" data-chipgroup="${id}" data-max="0">`+
+      item.options.map(o=>`<button type="button" class="chip${(item.preset||[]).includes(o)?' active':''}" data-q="${id}" data-val="${o}">${o}</button>`).join('')+
+      `<button type="button" class="chip add" data-addbtn="${id}">+ Add more</button></div>`+
+      `<div class="addbox" data-addbox="${id}"><input class="field" type="text" placeholder="Type a hobby and press Enter"></div>`;
+  }
+  if(item.type==='quickfire'){
+    return `<div class="grid-fav">`+item.items.map(lbl=>{
+      const fid = id+'_'+lbl.replace(/[^a-z]/gi,'').toLowerCase();
+      return `<input class="field" type="text" data-q="${fid}" placeholder="${lbl}">`;
+    }).join('')+`</div>`;
+  }
+  return '';
+}
+
+function warmRowHTML(item, n){
+  return `<div class="q">
+    <div class="blob">${svg(item.icon)}</div>
+    <div class="q-main">
+      <div class="qhead"><span class="q-num">${n}</span><h3>${item.q}</h3></div>
+      <div class="q-hint">${item.hint||''}</div>
+      ${fieldHTML(item)}
+    </div></div>`;
+}
+
+function sectionHTML(sec){
+  let inner = sec.qs.map(it=>{
+    const gatedAttr = it.gated ? ` data-gatedrow="${sec.id}"` : '';
+    return `<div class="q"${gatedAttr}>
+      <div class="blob" style="opacity:.0"></div>
+      <div class="q-main">
+        <div class="qhead"><h3 style="font-size:1.02rem">${it.q}</h3></div>
+        ${it.hint?`<div class="q-hint">${it.hint}</div>`:'<div style="height:6px"></div>'}
+        ${fieldHTML(it)}
+      </div></div>`;
+  }).join('');
+
+  let gateHTML = '';
+  if(sec.gate){
+    gateHTML = `<div class="gate">
+      <span class="glabel">${sec.gate.q}</span>
+      <div class="gbtns">
+        <button type="button" class="gbtn" data-gate="${sec.id}" data-val="yes">Yes</button>
+        <button type="button" class="gbtn" data-gate="${sec.id}" data-val="no">No</button>
+      </div></div>
+      <div class="skipnote" data-skip="${sec.id}">No problem — we'll skip this part.</div>`;
+    inner = `<div class="gated" data-gatedwrap="${sec.id}">${inner}</div>`;
+  }
+
+  return `<div class="sectionhead">
+      <div class="blob">${svg(sec.icon)}</div>
+      <div><h2>${sec.title}</h2>${sec.desc?`<div class="sdesc">${sec.desc}</div>`:''}</div>
+    </div>${gateHTML}${inner}`;
+}
+
+/* ---------- render ---------- */
+const form = document.getElementById('form');
+let html = WARM.map((it,i)=>warmRowHTML(it,i+1)).join('');
+html += `<div class="divider"><span>A few more details — this is what powers the cards</span></div>`;
+html += SECTIONS.map(sectionHTML).join('');
+form.innerHTML = html;
+
+/* ---------- interactions (event delegation) ---------- */
+const toast = document.getElementById('toast');
+let toastT;
+function flashSaved(){ toast.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>toast.classList.remove('show'),1100); }
+
+form.addEventListener('input', e=>{
+  const el = e.target;
+  const id = el.getAttribute('data-q');
+  if(id){ state[id]=el.value; }
+  const cId = el.getAttribute('data-q');
+  // textarea counter
+  if(el.tagName==='TEXTAREA'){
+    const c = form.querySelector(`[data-counter="${cId}"]`);
+    if(c) c.textContent = `${el.value.length}/${el.maxLength}`;
+  }
+  flashSaved();
+});
+
+form.addEventListener('change', e=>{ if(e.target.tagName==='SELECT'){ state[e.target.getAttribute('data-q')]=e.target.value; flashSaved(); } });
+
+form.addEventListener('click', e=>{
+  const chip = e.target.closest('.chip');
+  const gate = e.target.closest('.gbtn');
+  const addBtn = e.target.closest('[data-addbtn]');
+
+  if(addBtn){
+    const id = addBtn.getAttribute('data-addbtn');
+    form.querySelector(`[data-addbox="${id}"]`).classList.toggle('show');
+    return;
+  }
+  if(chip){
+    if(chip.classList.contains('add')) return;
+    const group = chip.closest('[data-chipgroup]');
+    const id = group.getAttribute('data-chipgroup');
+    const max = +group.getAttribute('data-max');
+    state[id] = state[id]||[];
+    const val = chip.getAttribute('data-val');
+    if(chip.classList.contains('active')){
+      chip.classList.remove('active');
+      state[id] = state[id].filter(v=>v!==val);
+    } else {
+      if(max && state[id].length>=max){ /* limit reached */ pulse(group); return; }
+      chip.classList.add('active');
+      state[id].push(val);
+    }
+    flashSaved();
+    return;
+  }
+  if(gate){
+    const id = gate.getAttribute('data-gate');
+    const val = gate.getAttribute('data-val');
+    form.querySelectorAll(`[data-gate="${id}"]`).forEach(b=>b.classList.toggle('active', b===gate));
+    const wrap = form.querySelector(`[data-gatedwrap="${id}"]`);
+    const skip = form.querySelector(`[data-skip="${id}"]`);
+    if(val==='no'){ wrap.style.maxHeight = wrap.scrollHeight+'px'; requestAnimationFrame(()=>{wrap.classList.add('collapsed');}); skip.classList.add('show'); }
+    else { wrap.classList.remove('collapsed'); wrap.style.maxHeight = wrap.scrollHeight+'px'; skip.classList.remove('show'); setTimeout(()=>wrap.style.maxHeight='none',420); }
+    state['gate_'+id]=val;
+    flashSaved();
+  }
+});
+
+/* add custom hobby tag on Enter */
+form.addEventListener('keydown', e=>{
+  const box = e.target.closest('[data-addbox]');
+  if(box && e.key==='Enter'){
+    e.preventDefault();
+    const val = e.target.value.trim();
+    if(!val) return;
+    const id = box.getAttribute('data-addbox');
+    const group = form.querySelector(`[data-chipgroup="${id}"]`);
+    const addBtn = group.querySelector('[data-addbtn]');
+    const chip = document.createElement('button');
+    chip.type='button'; chip.className='chip active'; chip.setAttribute('data-q',id); chip.setAttribute('data-val',val);
+    chip.textContent=val;
+    group.insertBefore(chip, addBtn);
+    state[id]=state[id]||[]; state[id].push(val);
+    e.target.value=''; box.classList.remove('show'); flashSaved();
+  }
+});
+
+function pulse(el){ el.animate([{filter:'none'},{filter:'brightness(.96)'},{filter:'none'}],{duration:220}); }
+
+/* continue */
+document.getElementById('continueBtn').addEventListener('click', ()=>{
+  toast.textContent = 'Step 1 saved — Step 2 coming soon ✓';
+  flashSaved();
+  setTimeout(()=>{ toast.textContent='Saved ✓'; }, 1600);
+});
+
+/* nav */
+const ham=document.getElementById('hamburger'), menu=document.getElementById('menu');
+ham.addEventListener('click',()=>menu.classList.toggle('open'));
+</script>
+</body>
+</html>
